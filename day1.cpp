@@ -11,7 +11,9 @@ int main() {
     while (std::getline(file, line)) {
 	int sclr = std::stoi(line.substr(1));
 	if (line[0] == 'L') sclr = -sclr;
-	ptr = (ptr + sclr % 99 + 100) % 100;
+	ptr +=sclr;
+	while (ptr < 0) ptr += 100;
+	while (ptr > 99) ptr -= 100;
 	pos[ptr] += 1;
     }
     std::cout << pos[0] << std::endl;
