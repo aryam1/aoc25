@@ -1,25 +1,20 @@
 #include <bits/stdc++.h>
 #include <chrono>
 #include <thread>
+#include <vector>
+#include <string>
 
 using namespace std;
 
-struct RGB {int r, g, b;};
-
-const RGB colours[10] = {
-	{13, 8, 135},{70, 3, 159},
-    {114, 1, 168},{156, 23, 158},
-    {189, 55, 134},{216, 87, 107},
-    {237, 121, 83},{251, 159, 58},
-    {253, 202, 38},{240, 249, 33}
-};	
+struct RGB {int r, g, b;};	
+const RGB colours[9] {{24, 15, 61}, {68, 15, 118}, {114, 31, 129}, {158, 47, 127}, {205, 64, 113}, {241, 96, 93}, {253, 150, 104}, {254, 202, 141}, {252, 253, 191}};
 
 array<pair<int,int>,8> neighbours = {{{0,-1},{0,1},{-1,-1},{-1,0},{-1,1},{1,-1},{1,0},{1,1}}};
 
 
 int scan_neighbours(vector<vector<int>>& m, 
-						 queue<pair<int,int>>& removable,
-						 int y, int x, bool bfs){
+					queue<pair<int,int>>& removable,
+					int y, int x, bool bfs){
 	int xbound = m[0].size();
     int ybound = m.size();
     
@@ -65,7 +60,7 @@ int main() {
    			scan_neighbours(mat,removable,y,x,false);
    		}
    	}
-   	int p1 = removable.size();
+   	size_t p1 = removable.size();
 
   	// hide cursor
   	cout << "\033[?25l";
@@ -74,24 +69,27 @@ int main() {
    	
    	// Iterate Multi-Source BFS
 
-   	const double base_sleep_us = 500000;   // 500 ms
-   	const double min_sleep_us = 50000;     // 50 ms
-   	
    	while (removable.size()>0){
    		// restore cursor to starting point
    		cout << "\033[u";
+   		double X = p1 - removable.size();
+   		double sig = 1/(abs(X/(0.3 + 0.1*(abs(X))))+1);
+   		
     	for (auto &row : mat) {
 	    	for (int c : row) {
 		        // use 0th color if value is negative, otherwise val + 1 for index 1 to 9
-		        int idx = (c < 0) ? 0 : c+1;
-		        RGB colour = colours[idx];
+		        if (c < 0) {
+		        	cout << "\033[0m  ";
+		        	continue;
+		        }
+		        RGB colour = colours[c];
 		        cout << "\033[48;2;" << colour.r << ";" << colour.g << ";" << colour.b << "m  \033[0m";
 	    	}
 	    	cout << "\n";
 	    }
-	    double factor = static_cast<double>(removable.size()) / (xbound * ybound);
-	    int sleep_us = max(min_sleep_us, base_sleep_us * factor);
-  		this_thread::sleep_for(chrono::microseconds(sleep_us));
+	    if (removable.size() == p1) this_thread::sleep_for(chrono::milliseconds(200));
+	    int sleep_ms = 1000 * sig;
+  		this_thread::sleep_for(chrono::milliseconds(sleep_ms));
 	    cout << flush;
 	    for (int i = removable.size();i--;){
 	    	auto [y,x] = removable.front();
@@ -104,7 +102,7 @@ int main() {
    	}
    	// show cursor again
    	cout << "\033[?25h" << flush;
-   	print("Initially removable: {}\n",p1);
-   	print("\nTotal Removals: {}\n",total);
+   	//print("Initially removable: {}\n",p1);
+   	//print("Total Removals: {}\n",total);
     return 0;
 }
