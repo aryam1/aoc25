@@ -20,7 +20,7 @@ int main() {
     	string::size_type dash = line.find("-");
     	long long start = stoll(line.substr(0,dash));
     	long long end = stoll(line.substr(dash+1));
-    	intervals.push_back(pair(start,end));
+    	intervals.push_back(pair{start,end});
     }
     sort(intervals.begin(),intervals.end());
     
