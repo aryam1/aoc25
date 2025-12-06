@@ -1,10 +1,9 @@
-#include <iostream>
 #include <fstream>
 #include <string>
-#include <regex>
-#include <string_view>
 #include <print>
 #include <algorithm>
+#include <vector>
+#include <utility>
 
 // All factors of vector index, smaller than index
 // Stored descending so longest substrings are checked first
