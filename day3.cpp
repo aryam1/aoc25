@@ -1,41 +1,53 @@
-#include <bits/stdc++.h>
+#include <fstream>
+#include <string>
+#include <print>
+#include <vector>
+#include <array>
+#include <algorithm>
+#include <cctype>
 
-using namespace std;
 
 int main() {
-
+	// Load file as stream
 	std::ifstream file("d3key.txt");
     std::string bank;
-    long long total = 0;
+    int total1 = 0;
+    long long total2 = 0;
+    
+    // For each row of numbers
     while (std::getline(file, bank)) {
-    	vector<int> v;
+    	std::vector<int> v;
+    	// Push number string into digit vector, using char arithmetic
    	    for (char c : bank) {
    	        if (isdigit((unsigned char)c)) v.push_back(c - '0');
    	    }
-   	    // Logic now is given some N and string len X, buffer is
-   	    // X -(N-1), so each digit has the following buffer of numbers
-   	    // to max from, leaving enough digits for remaining N, 
-   	    // this buffer is reduced by how far into its buffer region
-   	    // a digit is selected from, as all following numbers 
-   	    // lose this same amount of buffer 
-   	    vector<int>::iterator prev, curr;
+   	    // 2 pointer sliding window approach
+   	    std::vector<int>::iterator prev, curr;
    	    const int batts = 12;
+   	    // Buffer is the available digits - desired output length
+   	    // Each digit has this initial buffer as its maximum available domain 
    	    int buffer = v.size() - (batts-1);
    	    prev = v.begin();
-   	    array<int,batts> val{};
-   	    //cout << bank << '\n';
+   	    std::array<int,batts> val{};
+   	    
    	    for (int i = 0; i < batts; ++i){
-   	    	curr = max_element(prev,prev+buffer);
-   	    	//cout <<string((int)(curr-prev),' ')<<"^";
+   	    	// Maximise the current digit from its selection of digits within the buffer
+   	    	curr = std::max_element(prev,prev+buffer);
    	    	val[i] = *curr;
+   	    	// Shrink buffer by however many digits were wasted, for the remaining digits
+   	    	// If max was always first digit, i.e 9999..., buffer would never shrink
    	    	buffer -= (curr-prev);
+   	    	// Bring in left pane of sliding window, so more like jumping window
    	    	prev = curr+1;
    	    }
-   	    string valstr;
+   	    auto tens = std::max_element(val.begin(), val.end()-1);
+   	    total1 += (*tens)*10 + *(std::max_element(tens+1, val.end()));
+   	    
+   	    // Construct long long integer
+   	    std::string valstr;
    	    for (int x : val) valstr += '0' + x;
-   	    total += stoll(valstr);
-   	    //print("Val: {}\n",valstr);
+   	    total2 += stoll(valstr);
     }
-    print("Joltage Total: {}\n", total);
+    std::println("Joltage Total:\nPart 1: {}\nPart 2: {}", total1,total2);
     return 0;
 }
