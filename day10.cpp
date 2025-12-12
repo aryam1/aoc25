@@ -117,7 +117,15 @@ int main() {
 		xordp(state, steps[r],dp);
 		total += dp[0];
 		std::println("Min steps: {}\n",dp[0]);
-	}	
-	std::println("Total steps: {}",total);	    
+	}
+	std::println("Total steps: {}",total);
+
+	// Part 2 is essentially path finding in an n dimensional space
+	// Starting from 0,0,0...n0, what steps can be taken towards joltage point [a,b,c,d,...nx]
+	// BFS with heuristic to keep this fast
+	// OR, just use Z3 to solve with linear algebra 
+	for (auto j:jolts){
+		std::println("{}",j.size());
+	}
     return 0;
 }
