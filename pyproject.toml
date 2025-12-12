@@ -1,0 +1,10 @@
+[project]
+name = "aoc25"
+version = "0.1.0"
+description = "Python scripts for Advent of Code 2025 to save my sanity"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "pandas>=2.3.3",
+    "plotly[express]>=6.5.0",
+]
