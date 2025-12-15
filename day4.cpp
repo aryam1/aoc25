@@ -76,42 +76,47 @@ int main() {
    	}
    	size_t p1 = removable.size();
 
-  	// Hide cursor
-  	std::cout << "\033[?25l";
-	// Save cursor position below prompt
-	std::cout << "\033[s" << std::flush;
+   	bool DRAW = false;
+   	if (DRAW){
+	  	// Hide cursor
+	  	std::cout << "\033[?25l";
+		// Save cursor position below prompt
+		std::cout << "\033[s" << std::flush;	
+   	}
    	
    	// Iterate Multi-Source BFS and draw matrix
    	while (removable.size()>0){
-   		// Restore cursor to starting point
-   		std::cout << "\033[u";
+		if (DRAW){
+	   		// Restore cursor to starting point
+	   		std::cout << "\033[u";
 
-   		// Calculate fast sigmoid for input scaled frame timing
-   		// More operations in a BFS step = faster time
-   		double X = p1 - removable.size();
-   		double sig = 1/(abs(X/(0.3 + 0.1*(abs(X))))+1);
+	   		// Calculate fast sigmoid for input scaled frame timing
+	   		// More operations in a BFS step = faster time
+	   		double X = p1 - removable.size();
+	   		double sig = 1/(abs(X/(0.3 + 0.1*(abs(X))))+1);
 
-   		// Visualise matrix in terminal row by row
-    	for (auto &row : mat) {
-	    	for (int c : row) {
-		        // If cell is empty don't print a colour, otherwise val + 1 for index 1 to 9
-		        if (c < 0) {
-		        	std::cout << "\033[0m  ";
-		        	continue;
-		        }
-		        // Get correct colour and print the RGB values
-		        RGB colour = colours[c];
-		        std::cout << "\033[48;2;" << colour.r << ";" << colour.g << ";" << colour.b << "m  \033[0m";
-	    	}
-	    	// Move cursor to next row
-	    	std::cout << "\n";
-	    }
-	    // If it's the first frame, keep frame on screen for a bit longer to show initial state
-	    if (removable.size() == p1) std::this_thread::sleep_for(std::chrono::milliseconds(200));
-		// Use spin lock to slow down the "animation"
-	    int sleep_ms = 1000 * sig;
-  		std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
-	    std::cout << std::flush;
+	   		// Visualise matrix in terminal row by row
+	    	for (auto &row : mat) {
+		    	for (int c : row) {
+			        // If cell is empty don't print a colour, otherwise val + 1 for index 1 to 9
+			        if (c < 0) {
+			        	std::cout << "\033[0m  ";
+			        	continue;
+			        }
+			        // Get correct colour and print the RGB values
+			        RGB colour = colours[c];
+			        std::cout << "\033[48;2;" << colour.r << ";" << colour.g << ";" << colour.b << "m  \033[0m";
+		    	}
+		    	// Move cursor to next row
+		    	std::cout << "\n";
+		    }
+		    // If it's the first frame, keep frame on screen for a bit longer to show initial state
+		    if (removable.size() == p1) std::this_thread::sleep_for(std::chrono::milliseconds(200));
+			// Use spin lock to slow down the "animation"
+		    int sleep_ms = 1000 * sig;
+	  		std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
+		    std::cout << std::flush;
+		}
 
 	    // Do the actual BFS step
 	    for (int i = removable.size();i--;){
@@ -129,7 +134,7 @@ int main() {
 	    }
    	}
    	// Show cursor again
-   	std::cout << "\033[?25h" << std::flush;
+   	if (DRAW) std::cout << "\033[?25h" << std::flush;
    	std::println("Initially removable: {}",p1);
    	std::println("Total Removals: {}",total);
     return 0;
