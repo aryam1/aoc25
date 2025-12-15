@@ -65,13 +65,6 @@ int main() {
     	// Coord object is stored seperately on the heap
     	coords.emplace_back(std::make_shared<Coord>(x, y, z));
     }
-    
-    // std::println("Coordinates: ");
-    // for (const auto& uptr : coords) {
-    //     Coord& c = *uptr;
-    // 	Coord* p = c.getParent();
-    // 	std::println("{} {} {} -> {} {} {}",c.x,c.y,c.z,p->x,p->y,p->z);
-    // }
 
 	// Vector of shared pointer pairs of all possible pairs
     std::vector<std::pair<std::shared_ptr<Coord>, std::shared_ptr<Coord>>> pairs;
@@ -104,12 +97,6 @@ int main() {
 	
 	// Construct hashset of parents from coordinate vector, sorted by set size descending 
 	std::set<std::shared_ptr<Coord>, decltype(cmp)> parentGroups(coords.begin(),coords.end(), cmp);
-	
-	// Prints groups
-	// for (const auto& uptr : parentGroups) {
-	//     Coord& c = *uptr;
-	//	   std::println("{} {} {} -> {}",c.x,c.y,c.z,c.getSize());
-	// }
 	
 	// Get iterator to first element in the set, move it forward twice
 	// to get the product of the 3 largest groups after 1000 joins
